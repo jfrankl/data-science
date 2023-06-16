@@ -1,0 +1,6 @@
+Airport data:
+- Primary: https://openflights.org/data.html
+- Secondary: https://www.airnav.com/ (all data missing from primary source was manually scraped from here)
+
+Missing data:
+- Flight 20220225099606 has no departure airport
