@@ -1,7 +1,7 @@
 var flights;
 var airports;
 
-d3.csv("data/flights-may-18-2023.csv").then(function (data) {
+d3.csv("data/FOIA 2023-06030 (Elliott).csv").then(function (data) {
     window.flights = data;
 
     d3.csv("data/airports.csv").then(function (data) {

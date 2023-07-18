@@ -34,18 +34,15 @@ def notify(title, text):
 session_key = "JSessionId_9401"
 
 # Using the API requires an active session id cookie; do a search on the website to get a new cookie and then paste that here
-session_id = "D3DA358E58CD7BEAA7C18815F9B396CF"
-
-# Database class code; Operate without License is "28600"
-class_code = "28600,20999"
+session_id = "7AD0EFCC495AD33EF6A50E5EBBE31C3F"
 
 case_types = "CF,TR,CT,CM"
 
 # Starting date
-search_start = "2022-02-28"
+search_start = "2021-12-31"
 
 # How many days to search
-search_days = 95
+search_days = 365
 
 # Store information about a case that needs to be repeated due to CAPTCHA
 case_to_repeat = None
@@ -70,6 +67,72 @@ headers = {
     "Sec-GPC": "1",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
 }
+
+
+def get_case(county_no, case_no):
+    random_sleep()
+
+    case_parameters = {
+        "countyNo": county_no,
+        "caseNo": case_no,
+    }
+
+    print(f"get_case {case_parameters}")
+
+    try:
+        case_response = requests.post(
+            f"https://wcca.wicourts.gov/caseDetail/{county_no}/{case_no}",
+            cookies=cookies,
+            headers=headers,
+            json=case_parameters,
+            timeout=timeout_amount,
+        ).json()
+
+        print("this-worked")
+        print(case_response)
+
+        # print(case_response)
+
+        if "errors" in case_response.keys():
+            print("did this work?")
+            # notify("Cookie needed", "Please generate a new cookie and press Enter.")
+
+            new_cookie = input("Refresh captcha and press enter...")
+
+            if new_cookie:
+                cookies[session_key] = new_cookie
+
+            get_case(county_no, case_no)
+        else:
+            timestamp = datetime.now()
+            os.makedirs(os.path.dirname("output/history.ndjson"), exist_ok=True)
+            with open("output/history.ndjson", "a") as file:
+                json.dump(
+                    {
+                        "type": "success",
+                        "parameters": case_parameters,
+                    },
+                    file,
+                )
+                file.write("\n")
+            return {
+                "parameters": case_parameters,
+                "timestamp": str(timestamp),
+                "response": case_response,
+            }
+
+    except:
+        print("failllll")
+        os.makedirs(os.path.dirname("output/history.ndjson"), exist_ok=True)
+        with open("output/history.ndjson", "a") as file:
+            json.dump(
+                {
+                    "type": "failure",
+                    "parameters": case_parameters,
+                },
+                file,
+            )
+            file.write("\n")
 
 
 def get_cases(start, end):
@@ -113,6 +176,8 @@ def get_cases(start, end):
                 )
                 file.write("\n")
 
+        return cases
+
     except:
         filename = "output/cases-list-errors.ndjson"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -143,12 +208,12 @@ for day in range(search_days):
 
     cases_in_day = []
 
-    for search_case in search_cases["cases"]:
+    for search_case in search_cases:
         case = get_case(search_case["countyNo"], search_case["caseNo"])
         # print("Case:", case)
         cases_in_day.append(case)
 
-    filename = "output/cases.ndjson"
+    filename = "output/cases-2021.ndjson"
     os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     for c in cases_in_day:
