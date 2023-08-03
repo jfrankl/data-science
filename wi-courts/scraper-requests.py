@@ -39,7 +39,7 @@ session_id = "7AD0EFCC495AD33EF6A50E5EBBE31C3F"
 case_types = "CF,TR,CT,CM"
 
 # Starting date
-search_start = "2021-12-31"
+search_start = "2017-12-31"
 
 # How many days to search
 search_days = 365
@@ -213,7 +213,7 @@ for day in range(search_days):
         # print("Case:", case)
         cases_in_day.append(case)
 
-    filename = "output/cases-2021.ndjson"
+    filename = "output/cases-2017.ndjson"
     os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     for c in cases_in_day:
