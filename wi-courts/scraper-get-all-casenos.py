@@ -17,16 +17,16 @@ def random_sleep():
 session_key = "JSessionId_9401"
 
 # Using the API requires an active session id cookie; do a search on the website to get a new cookie and then paste that here
-session_id = "77CA6215C5E9EE107F8F0B8E73C53299"
+session_id = "A1591B5A03FA6EAECE02D94EF0AF0E94"
 
 
 case_types = "CF,TR,CT,CM"
 
 # Starting date
-search_start = "2022-01-01"
+search_start = "2018-12-31"
 
 # How many days to search
-search_days = 2
+search_days = 365
 
 # Store information about a case that needs to be repeated due to CAPTCHA
 case_to_repeat = None

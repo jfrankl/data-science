@@ -4,8 +4,9 @@ import ndjson
 
 
 def process_row(data):
+    # print(data)
     result = data["response"]["result"]
-    view = data["response"]["view"]
+    parameters = data["parameters"]
 
     # Remove these columns, which were determined to be less useful.
     remove_columns = [
@@ -32,7 +33,7 @@ def process_row(data):
     # Adds a link to the court website for this case, for easy look ups.
     result[
         "caseUrl"
-    ] = f"https://wcca.wicourts.gov/caseDetail.html?caseNo={view['caseNo']['value']}&countyNo={view['countyNo']['value']}&mode=details"
+    ] = f"https://wcca.wicourts.gov/caseDetail.html?caseNo={parameters['caseNo']}&countyNo={parameters['countyNo']}&mode=details"
 
     # I am adding a prefix to these columns to control the order in which they'll show up in the file
     # For example, _a-caption will be the first column and _b-countyName will be the second column. There
@@ -77,16 +78,19 @@ def process_row(data):
     ]
 
     for column in rename_columns:
-        result[column["new"]] = result.pop(column["old"])
+        try:
+            result[column["new"]] = result.pop(column["old"])
+        except:
+            print("exception")
 
     return result
 
 
 # load from file-like objects
-with open(f"output/cases.ndjson") as f:
+with open(f"output/wi-cases-2018.ndjson") as f:
     data = ndjson.load(f)
     result = list(map(process_row, data))
-    with open(f"output/cases.json", "w") as file:
-        json.dump(result, file)
-        with open(f"output/cases.csv", "w") as file:
-            file.write(json_2_csv.convert_to_csv(result).getvalue())
+    with open(f"output/wi-cases-2018.json", "w") as file:
+        json.dump(data, file)
+        # with open(f"output/cases.csv", "w") as file:
+        #     file.write(json_2_csv.convert_to_csv(result).getvalue())
